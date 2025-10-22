@@ -21,7 +21,8 @@ export const createUser = async ({ name, email, password, role }) => {
       .where(eq(users.email, email))
       .limit(1);
 
-    if (existingUser.length > 0) throw new Error('User with this email already exists');
+    if (existingUser.length > 0)
+      throw new Error('User with this email already exists');
 
     const password_hash = await hashPassword(password);
 
