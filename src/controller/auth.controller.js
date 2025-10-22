@@ -1,9 +1,10 @@
 import logger from '#config/logger.js';
 import { signupSchema } from '#validations/auth.validation.js';
 import { formatValidationError } from '#utils/format.js';
-import { createUser } from '#services/auth.service.js';
+import { createUser, loginUser } from '#services/auth.service.js';
 import { jwttoken } from '#utils/jwt.js';
 import { cookies } from '#utils/cookies.js';
+import { signinSchema } from '#validations/auth.validation.js';
 
 export const signup = async (req, res, next) => {
   try {
@@ -43,6 +44,64 @@ export const signup = async (req, res, next) => {
       return res.status(409).json({ error: 'Email already exists' });
     }
 
+    next(error);
+  }
+};
+
+export const signin = async (req, res, next) => {
+  try {
+    const validationResult = signinSchema.safeParse(req.body);
+
+    if (!validationResult.success) {
+      return res.status(400).json({
+        error: 'Validation failed',
+        details: formatValidationError(validationResult.error),
+      });
+    }
+
+    const { email, password } = validationResult.data;
+
+    const user = await loginUser({ email, password });
+
+    const token = jwttoken.sign({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    cookies.set(res, 'token', token);
+
+    logger.info(`User login successful: ${email}`);
+    res.status(200).json({
+      message: 'Login successful',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    logger.error('Signin error: ', error);
+
+    if (error.message === 'Invalid credentials') {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    next(error);
+  }
+};
+
+export const signout = async (req, res, next) => {
+  try {
+    cookies.clear(res, 'token');
+    
+    logger.info('User logged out successfully');
+    res.status(200).json({
+      message: 'Logout successful',
+    });
+  } catch (error) {
+    logger.error('Signout error: ', error);
     next(error);
   }
 };
