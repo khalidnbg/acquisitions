@@ -21,7 +21,7 @@ export const getAllUsers = async () => {
   }
 };
 
-export const getUserById = async (id) => {
+export const getUserById = async id => {
   try {
     const result = await db
       .select({
@@ -49,8 +49,8 @@ export const getUserById = async (id) => {
 export const updateUser = async (id, updates) => {
   try {
     // First check if user exists
-    const existingUser = await getUserById(id);
-    
+    await getUserById(id);
+
     // Add timestamp for updated_at
     const updatesWithTimestamp = {
       ...updates,
@@ -81,11 +81,11 @@ export const updateUser = async (id, updates) => {
   }
 };
 
-export const deleteUser = async (id) => {
+export const deleteUser = async id => {
   try {
     // First check if user exists
-    const existingUser = await getUserById(id);
-    
+    await getUserById(id);
+
     const result = await db
       .delete(users)
       .where(eq(users.id, id))

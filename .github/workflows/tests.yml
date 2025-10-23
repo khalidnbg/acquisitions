@@ -9,7 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -48,7 +48,7 @@ jobs:
         if: always()
         run: |
           echo "## Test Results 🧪" >> $GITHUB_STEP_SUMMARY
-          
+
           if [ -f coverage/coverage-summary.json ]; then
             echo "### Coverage Report 📊" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
@@ -69,7 +69,7 @@ jobs:
           else
             echo "⚠️ Coverage report not generated" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [ $? -eq 0 ]; then
             echo "✅ All tests passed!" >> $GITHUB_STEP_SUMMARY
           else

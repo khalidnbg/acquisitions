@@ -31,7 +31,7 @@ export const securityMiddleware = async (req, res, next) => {
         mode: 'LIVE',
         interval: '1m',
         max: limit,
-        message: `${role}-rate-limit`,
+        message: `${role}-rate-limit (${message})`,
       })
     );
 

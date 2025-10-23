@@ -95,7 +95,7 @@ export const signin = async (req, res, next) => {
 export const signout = async (req, res, next) => {
   try {
     cookies.clear(res, 'token');
-    
+
     logger.info('User logged out successfully');
     res.status(200).json({
       message: 'Logout successful',
